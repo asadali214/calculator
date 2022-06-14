@@ -3,26 +3,26 @@
 
 ## Introduction
 
-Simple calculator API hosted on APIMATIC
+Simple calculator API hosted on ASADALI214
 
 ## Install the Package
 
 Run the following command to install the package and automatically add the dependency to your composer.json file:
 
 ```php
-composer require "apimatic/calculator:1.0.0"
+composer require "asadali214/calculator:1.0.0"
 ```
 
 Or add it to the composer.json file manually as given below:
 
 ```php
 "require": {
-    "apimatic/calculator": "1.0.0"
+    "asadali214/calculator": "1.0.0"
 }
 ```
 
 You can also view the package at:
-https://packagist.org/packages/apimatic/calculator#1.0.0
+https://packagist.org/packages/asadali214/calculator#1.0.0
 
 ## Initialize the API Client
 
