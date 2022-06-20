@@ -19,102 +19,74 @@ class CalcClient implements ConfigurationInterface
 {
     private $simpleCalculator;
 
-    private $timeout = ConfigurationDefaults::TIMEOUT;
-    private $enableRetries = ConfigurationDefaults::ENABLE_RETRIES;
-    private $numberOfRetries = ConfigurationDefaults::NUMBER_OF_RETRIES;
-    private $retryInterval = ConfigurationDefaults::RETRY_INTERVAL;
-    private $backOffFactor = ConfigurationDefaults::BACK_OFF_FACTOR;
-    private $maximumRetryWaitTime = ConfigurationDefaults::MAXIMUM_RETRY_WAIT_TIME;
-    private $retryOnTimeout = ConfigurationDefaults::RETRY_ON_TIMEOUT;
-    private $httpStatusCodesToRetry = ConfigurationDefaults::HTTP_STATUS_CODES_TO_RETRY;
-    private $httpMethodsToRetry = ConfigurationDefaults::HTTP_METHODS_TO_RETRY;
-    private $environment = ConfigurationDefaults::ENVIRONMENT;
+    private $configOptions = [
+        'timeout' => ConfigurationDefaults::TIMEOUT,
+        'enableRetries' => ConfigurationDefaults::ENABLE_RETRIES,
+        'numberOfRetries' => ConfigurationDefaults::NUMBER_OF_RETRIES,
+        'retryInterval' => ConfigurationDefaults::RETRY_INTERVAL,
+        'backOffFactor' => ConfigurationDefaults::BACK_OFF_FACTOR,
+        'maximumRetryWaitTime' => ConfigurationDefaults::MAXIMUM_RETRY_WAIT_TIME,
+        'retryOnTimeout' => ConfigurationDefaults::RETRY_ON_TIMEOUT,
+        'httpStatusCodesToRetry' => ConfigurationDefaults::HTTP_STATUS_CODES_TO_RETRY,
+        'httpMethodsToRetry' => ConfigurationDefaults::HTTP_METHODS_TO_RETRY,
+        'environment' => ConfigurationDefaults::ENVIRONMENT,
+        'httpCallback' => null
+    ];
     private $authManagers = [];
-    private $httpCallback;
 
-    public function __construct(array $configOptions = null)
+    /**
+     * @param array $configOptions
+     * @deprecated Use CalcClientBuilder to set configurations instead
+     * @see CalcClientBuilder::init()
+     */
+    public function __construct(array $configOptions = [])
     {
-        if (isset($configOptions['timeout'])) {
-            $this->timeout = $configOptions['timeout'];
-        }
-        if (isset($configOptions['enableRetries'])) {
-            $this->enableRetries = $configOptions['enableRetries'];
-        }
-        if (isset($configOptions['numberOfRetries'])) {
-            $this->numberOfRetries = $configOptions['numberOfRetries'];
-        }
-        if (isset($configOptions['retryInterval'])) {
-            $this->retryInterval = $configOptions['retryInterval'];
-        }
-        if (isset($configOptions['backOffFactor'])) {
-            $this->backOffFactor = $configOptions['backOffFactor'];
-        }
-        if (isset($configOptions['maximumRetryWaitTime'])) {
-            $this->maximumRetryWaitTime = $configOptions['maximumRetryWaitTime'];
-        }
-        if (isset($configOptions['retryOnTimeout'])) {
-            $this->retryOnTimeout = $configOptions['retryOnTimeout'];
-        }
-        if (isset($configOptions['httpStatusCodesToRetry'])) {
-            $this->httpStatusCodesToRetry = $configOptions['httpStatusCodesToRetry'];
-        }
-        if (isset($configOptions['httpMethodsToRetry'])) {
-            $this->httpMethodsToRetry = $configOptions['httpMethodsToRetry'];
-        }
-        if (isset($configOptions['environment'])) {
-            $this->environment = $configOptions['environment'];
-        }
-        if (isset($configOptions['httpCallback'])) {
-            $this->httpCallback = $configOptions['httpCallback'];
-        }
+        $configOptions = array_map(
+            function ($c) {
+                if (is_object($c)) {
+                    $c = clone $c;
+                }
+                return $c;
+            },
+            $configOptions
+        );
+        $this->configOptions = array_merge($this->configOptions, $configOptions);
+
+        // after removal of deprecation
+//        $this->configOptions = $configOptions;
+    }
+
+    /**
+     * Create a builder with the current client's configurations.
+     *
+     * @return CalcClientBuilder
+     */
+    public function toBuilder(): CalcClientBuilder
+    {
+        return CalcClientBuilder::init($this->configOptions);
     }
 
     /**
      * Get the client configuration as an associative array
+     * @deprecated
      */
     public function getConfiguration(): array
     {
-        $configMap = [];
-
-        if (isset($this->timeout)) {
-            $configMap['timeout'] = $this->timeout;
-        }
-        if (isset($this->enableRetries)) {
-            $configMap['enableRetries'] = $this->enableRetries;
-        }
-        if (isset($this->numberOfRetries)) {
-            $configMap['numberOfRetries'] = $this->numberOfRetries;
-        }
-        if (isset($this->retryInterval)) {
-            $configMap['retryInterval'] = $this->retryInterval;
-        }
-        if (isset($this->backOffFactor)) {
-            $configMap['backOffFactor'] = $this->backOffFactor;
-        }
-        if (isset($this->maximumRetryWaitTime)) {
-            $configMap['maximumRetryWaitTime'] = $this->maximumRetryWaitTime;
-        }
-        if (isset($this->retryOnTimeout)) {
-            $configMap['retryOnTimeout'] = $this->retryOnTimeout;
-        }
-        if (isset($this->httpStatusCodesToRetry)) {
-            $configMap['httpStatusCodesToRetry'] = $this->httpStatusCodesToRetry;
-        }
-        if (isset($this->httpMethodsToRetry)) {
-            $configMap['httpMethodsToRetry'] = $this->httpMethodsToRetry;
-        }
-        if (isset($this->environment)) {
-            $configMap['environment'] = $this->environment;
-        }
-        if (isset($this->httpCallback)) {
-            $configMap['httpCallback'] = $this->httpCallback;
-        }
-
-        return $configMap;
+        return array_map(
+            function ($c) {
+                if (is_object($c)) {
+                    $c = clone $c;
+                }
+                return $c;
+            },
+            $this->configOptions
+        );
     }
 
     /**
      * Clone this client and override given configuration options
+     * @deprecated Will be removed in the next release
+     * @see CalcClientBuilder::build()
      */
     public function withConfiguration(array $configOptions): self
     {
@@ -123,52 +95,52 @@ class CalcClient implements ConfigurationInterface
 
     public function getTimeout(): int
     {
-        return $this->timeout;
+        return $this->configOptions['timeout'];
     }
 
     public function shouldEnableRetries(): bool
     {
-        return $this->enableRetries;
+        return $this->configOptions['enableRetries'];
     }
 
     public function getNumberOfRetries(): int
     {
-        return $this->numberOfRetries;
+        return $this->configOptions['numberOfRetries'];
     }
 
     public function getRetryInterval(): float
     {
-        return $this->retryInterval;
+        return $this->configOptions['retryInterval'];
     }
 
     public function getBackOffFactor(): float
     {
-        return $this->backOffFactor;
+        return $this->configOptions['backOffFactor'];
     }
 
     public function getMaximumRetryWaitTime(): int
     {
-        return $this->maximumRetryWaitTime;
+        return $this->configOptions['maximumRetryWaitTime'];
     }
 
     public function shouldRetryOnTimeout(): bool
     {
-        return $this->retryOnTimeout;
+        return $this->configOptions['retryOnTimeout'];
     }
 
     public function getHttpStatusCodesToRetry(): array
     {
-        return $this->httpStatusCodesToRetry;
+        return $this->configOptions['httpStatusCodesToRetry'];
     }
 
     public function getHttpMethodsToRetry(): array
     {
-        return $this->httpMethodsToRetry;
+        return $this->configOptions['httpMethodsToRetry'];
     }
 
     public function getEnvironment(): string
     {
-        return $this->environment;
+        return $this->configOptions['environment'];
     }
 
     /**
@@ -180,7 +152,7 @@ class CalcClient implements ConfigurationInterface
      */
     public function getBaseUri(string $server = Server::DEFAULT_): string
     {
-        return static::ENVIRONMENT_MAP[$this->environment][$server];
+        return static::ENVIRONMENT_MAP[$this->getEnvironment()][$server];
     }
 
     /**
@@ -192,7 +164,7 @@ class CalcClient implements ConfigurationInterface
             $this->simpleCalculator = new Controllers\SimpleCalculatorController(
                 $this,
                 $this->authManagers,
-                $this->httpCallback
+                $this->configOptions['httpCallback']
             );
         }
         return $this->simpleCalculator;
