@@ -45,8 +45,9 @@ The following parameters are configurable for the API Client:
 The API client can be initialized as follows:
 
 ```php
-$client = new CalcLib\CalcClient([
-]);
+$client = CalcLib\CalcClientBuilder::init()
+    ->timeout(1)
+    ->build();
 ```
 
 ## List of APIs
