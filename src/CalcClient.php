@@ -67,7 +67,7 @@ class CalcClient implements ConfigurationInterface
     /**
      * Clone this client and override given configuration options
      * @deprecated It will be removed in the next release,
-     *             Use toBuilder()->build() instead
+     *             Use toBuilder()->build() to set configurations instead
      * @see CalcClientBuilder::build()
      */
     public function withConfiguration(array $config): self
