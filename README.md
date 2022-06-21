@@ -3,21 +3,21 @@
 
 ## Introduction
 
-Simple calculator API hosted on ASADALI214
+Simple calculator API hosted on [Packagist/asadali214](https://packagist.org/packages/asadali214/calculator)
 
 ## Install the Package
 
 Run the following command to install the package and automatically add the dependency to your composer.json file:
 
 ```php
-composer require "asadali214/calculator:1.0.0"
+composer require "asadali214/calculator:1.0.3"
 ```
 
 Or add it to the composer.json file manually as given below:
 
 ```php
 "require": {
-    "asadali214/calculator": "1.0.0"
+    "asadali214/calculator": "1.0.3"
 }
 ```
 
