@@ -6,44 +6,26 @@ use CalcLib\Http\HttpCallBack;
 
 class CalcClientBuilder
 {
-    /**
-     * @var array List of Default configurations
-     */
-    private $config = [
-        'timeout' => ConfigurationDefaults::TIMEOUT,
-        'enableRetries' => ConfigurationDefaults::ENABLE_RETRIES,
-        'numberOfRetries' => ConfigurationDefaults::NUMBER_OF_RETRIES,
-        'retryInterval' => ConfigurationDefaults::RETRY_INTERVAL,
-        'backOffFactor' => ConfigurationDefaults::BACK_OFF_FACTOR,
-        'maximumRetryWaitTime' => ConfigurationDefaults::MAXIMUM_RETRY_WAIT_TIME,
-        'retryOnTimeout' => ConfigurationDefaults::RETRY_ON_TIMEOUT,
-        'httpStatusCodesToRetry' => ConfigurationDefaults::HTTP_STATUS_CODES_TO_RETRY,
-        'httpMethodsToRetry' => ConfigurationDefaults::HTTP_METHODS_TO_RETRY,
-        'environment' => ConfigurationDefaults::ENVIRONMENT,
-        'httpCallback' => null
-    ];
+    private $config = [];
 
-    private function clone(array $config): array
+    private function __construct()
     {
-        return array_map(
-            function ($c) {
-                if (is_object($c)) {
-                    $c = clone $c;
-                }
-                return $c;
-            },
-            $config
-        );
     }
 
-    private function __construct(array $config)
+    public static function init(): self
     {
-        $this->config = array_merge($this->config, $this->clone($config));
+        return new self();
     }
 
-    public static function init(array $config = []): self
+    public function withConfig(array $config): self
     {
-        return new self($config);
+        $this->config = array_merge($this->config, ApiHelper::clone($config));
+        return $this;
+    }
+
+    public function getConfiguration(): array
+    {
+        return ApiHelper::clone($this->config);
     }
 
     public function timeout(int $timeout): self
@@ -122,6 +104,6 @@ class CalcClientBuilder
 
     public function build(): CalcClient
     {
-        return new CalcClient($this->clone($this->config));
+        return new CalcClient($this->config);
     }
 }

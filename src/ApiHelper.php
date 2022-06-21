@@ -43,6 +43,25 @@ class ApiHelper
     }
 
     /**
+     * Return an array with all cloned inner elements of the provided array.
+     *
+     * @param array $array
+     * @return array
+     */
+    public static function clone(array $array): array
+    {
+        return array_map(
+            function ($c) {
+                if (is_object($c)) {
+                    $c = clone $c;
+                }
+                return $c;
+            },
+            $array
+        );
+    }
+
+    /**
      * Replaces template parameters in the given url
      *
      * @param    string  $url         The query string builder to replace the template parameters

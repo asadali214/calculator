@@ -19,41 +19,18 @@ class CalcClient implements ConfigurationInterface
 {
     private $simpleCalculator;
 
-    private $configOptions = [
-        'timeout' => ConfigurationDefaults::TIMEOUT,
-        'enableRetries' => ConfigurationDefaults::ENABLE_RETRIES,
-        'numberOfRetries' => ConfigurationDefaults::NUMBER_OF_RETRIES,
-        'retryInterval' => ConfigurationDefaults::RETRY_INTERVAL,
-        'backOffFactor' => ConfigurationDefaults::BACK_OFF_FACTOR,
-        'maximumRetryWaitTime' => ConfigurationDefaults::MAXIMUM_RETRY_WAIT_TIME,
-        'retryOnTimeout' => ConfigurationDefaults::RETRY_ON_TIMEOUT,
-        'httpStatusCodesToRetry' => ConfigurationDefaults::HTTP_STATUS_CODES_TO_RETRY,
-        'httpMethodsToRetry' => ConfigurationDefaults::HTTP_METHODS_TO_RETRY,
-        'environment' => ConfigurationDefaults::ENVIRONMENT,
-        'httpCallback' => null
-    ];
+    private $configOptions;
     private $authManagers = [];
 
     /**
-     * @param array $configOptions
-     * @deprecated Use CalcClientBuilder to set configurations instead
+     * @param array $config
+     * @deprecated Use CalcClientBuilder::init()->withConfig($config)->build() to set configurations instead
      * @see CalcClientBuilder::init()
+     * @see CalcClientBuilder::build()
      */
-    public function __construct(array $configOptions = [])
+    public function __construct(array $config = [])
     {
-        $configOptions = array_map(
-            function ($c) {
-                if (is_object($c)) {
-                    $c = clone $c;
-                }
-                return $c;
-            },
-            $configOptions
-        );
-        $this->configOptions = array_merge($this->configOptions, $configOptions);
-
-        // after removal of deprecation
-//        $this->configOptions = $configOptions;
+        $this->configOptions = array_merge(ConfigurationDefaults::_ALL, ApiHelper::clone($config));
     }
 
     /**
@@ -63,34 +40,27 @@ class CalcClient implements ConfigurationInterface
      */
     public function toBuilder(): CalcClientBuilder
     {
-        return CalcClientBuilder::init($this->configOptions);
+        return CalcClientBuilder::init()->withConfig($this->configOptions);
     }
 
     /**
      * Get the client configuration as an associative array
-     * @deprecated
+     * @deprecated Use toBuilder()->getConfiguration() instead
+     * @see CalcClientBuilder::getConfiguration()
      */
     public function getConfiguration(): array
     {
-        return array_map(
-            function ($c) {
-                if (is_object($c)) {
-                    $c = clone $c;
-                }
-                return $c;
-            },
-            $this->configOptions
-        );
+        return $this->toBuilder()->getConfiguration();
     }
 
     /**
      * Clone this client and override given configuration options
-     * @deprecated Will be removed in the next release
+     * @deprecated Use toBuilder()->withConfig($config)->build() instead
      * @see CalcClientBuilder::build()
      */
     public function withConfiguration(array $configOptions): self
     {
-        return new self(\array_merge($this->getConfiguration(), $configOptions));
+        return $this->toBuilder()->withConfig($configOptions)->build();
     }
 
     public function getTimeout(): int
