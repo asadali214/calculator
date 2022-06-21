@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CalcLib;
 
 use CalcLib\Http\HttpCallBack;
