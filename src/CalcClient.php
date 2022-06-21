@@ -24,7 +24,7 @@ class CalcClient implements ConfigurationInterface
 
     /**
      * @param array $config
-     * @deprecated Use CalcClientBuilder::init()->withConfig($config)->build() to set configurations instead
+     * @deprecated Use CalcClientBuilder::init()->build() to set configurations instead
      * @see CalcClientBuilder::init()
      * @see CalcClientBuilder::build()
      */
@@ -40,12 +40,23 @@ class CalcClient implements ConfigurationInterface
      */
     public function toBuilder(): CalcClientBuilder
     {
-        return CalcClientBuilder::init()->withConfig($this->configOptions);
+        return CalcClientBuilder::init()
+            ->timeout($this->getTimeout())
+            ->enableRetries($this->shouldEnableRetries())
+            ->numberOfRetries($this->getNumberOfRetries())
+            ->retryInterval($this->getRetryInterval())
+            ->backOffFactor($this->getBackOffFactor())
+            ->maximumRetryWaitTime($this->getMaximumRetryWaitTime())
+            ->httpStatusCodesToRetry($this->getHttpStatusCodesToRetry())
+            ->httpMethodsToRetry($this->getHttpMethodsToRetry())
+            ->environment($this->getEnvironment())
+            ->httpCallback($this->configOptions['httpCallback']);
     }
 
     /**
      * Get the client configuration as an associative array
-     * @deprecated Use toBuilder()->getConfiguration() instead
+     * @deprecated It will be removed in the next release,
+     *             Use toBuilder()->getConfiguration() instead
      * @see CalcClientBuilder::getConfiguration()
      */
     public function getConfiguration(): array
@@ -55,12 +66,25 @@ class CalcClient implements ConfigurationInterface
 
     /**
      * Clone this client and override given configuration options
-     * @deprecated Use toBuilder()->withConfig($config)->build() instead
+     * @deprecated It will be removed in the next release,
+     *             Use toBuilder()->build() instead
      * @see CalcClientBuilder::build()
      */
-    public function withConfiguration(array $configOptions): self
+    public function withConfiguration(array $config): self
     {
-        return $this->toBuilder()->withConfig($configOptions)->build();
+        $config = array_merge(ConfigurationDefaults::_ALL, $this->configOptions, ApiHelper::clone($config));
+        return CalcClientBuilder::init()
+            ->timeout($config['timeout'])
+            ->enableRetries($config['enableRetries'])
+            ->numberOfRetries($config['numberOfRetries'])
+            ->retryInterval($config['retryInterval'])
+            ->backOffFactor($config['backOffFactor'])
+            ->maximumRetryWaitTime($config['maximumRetryWaitTime'])
+            ->httpStatusCodesToRetry($config['httpStatusCodesToRetry'])
+            ->httpMethodsToRetry($config['httpMethodsToRetry'])
+            ->environment($config['environment'])
+            ->httpCallback($config['httpCallback'])
+            ->build();
     }
 
     public function getTimeout(): int

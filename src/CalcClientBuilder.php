@@ -19,12 +19,6 @@ class CalcClientBuilder
         return new self();
     }
 
-    public function withConfig(array $config): self
-    {
-        $this->config = array_merge($this->config, ApiHelper::clone($config));
-        return $this;
-    }
-
     public function getConfiguration(): array
     {
         return ApiHelper::clone($this->config);
@@ -48,13 +42,13 @@ class CalcClientBuilder
         return $this;
     }
 
-    public function retryInterval(int $retryInterval): self
+    public function retryInterval(float $retryInterval): self
     {
         $this->config['retryInterval'] = $retryInterval;
         return $this;
     }
 
-    public function backOffFactor(int $backOffFactor): self
+    public function backOffFactor(float $backOffFactor): self
     {
         $this->config['backOffFactor'] = $backOffFactor;
         return $this;
@@ -92,7 +86,7 @@ class CalcClientBuilder
         return $this;
     }
 
-    public function environment(bool $environment): self
+    public function environment(string $environment): self
     {
         $this->config['environment'] = $environment;
         return $this;
